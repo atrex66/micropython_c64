@@ -1,102 +1,40 @@
-[![Unix CI badge](https://github.com/micropython/micropython/actions/workflows/ports_unix.yml/badge.svg)](https://github.com/micropython/micropython/actions?query=branch%3Amaster+event%3Apush) [![STM32 CI badge](https://github.com/micropython/micropython/actions/workflows/ports_stm32.yml/badge.svg)](https://github.com/micropython/micropython/actions?query=branch%3Amaster+event%3Apush) [![Docs CI badge](https://github.com/micropython/micropython/actions/workflows/docs.yml/badge.svg)](https://docs.micropython.org/) [![codecov](https://codecov.io/gh/micropython/micropython/branch/master/graph/badge.svg?token=I92PfD05sD)](https://codecov.io/gh/micropython/micropython)
+# C64 MicroPython Cartridge
 
-The MicroPython project
-=======================
-<p align="center">
-  <img src="https://raw.githubusercontent.com/micropython/micropython/master/logo/upython-with-micro.jpg" alt="MicroPython Logo"/>
-</p>
+A MicroPython firmware for a custom RP2350B-based Commodore 64 expansion
+cartridge. The RP2350B acts as the C64 bus master, driving the expansion
+port's address/data bus, R/W, and control lines via PIO, with the goal of
+running MicroPython as the C64's interactive environment — including
+routing the REPL to the C64's 40x25 text screen and reading input from the
+C64 keyboard.
 
-This is the MicroPython project, an implementation of Python 3.x for
-microcontrollers, embedded systems and other constrained platforms.
-You can find the official website at [micropython.org](http://www.micropython.org).
+Board: `C64_RP2350B` (RP2354B0A4, RP2350B family, 2 MiB flash, optional
+APS6404L PSRAM).
 
-MicroPython implements the entire Python 3.4 syntax (including exceptions,
-`with`, `yield from`, etc., and additionally `async`/`await` keywords from
-Python 3.5 and some select features from later versions). The following core
-datatypes are provided: `str`(including basic Unicode support), `bytes`,
-`bytearray`, `tuple`, `list`, `dict`, `set`, `frozenset`, `array.array`,
-`collections.namedtuple`, classes and instances. Builtin modules include
-`os`, `sys`, `time`, `re`, and `struct`, etc. Some ports have support for
-`_thread` module (multithreading), `socket` and `ssl` for networking, and
-`asyncio`. Note that only a subset of Python 3 functionality is implemented
-for the data types and modules.
+## Building
 
-MicroPython can execute scripts in textual source form (.py files) or from
-precompiled bytecode (.mpy files), in both cases either from an on-device
-filesystem or "frozen" into the MicroPython executable.
+Two build variants are provided, depending on whether your cartridge PCB has
+the PSRAM chip fitted.
 
-MicroPython also provides a set of MicroPython-specific modules to access
-hardware-specific functionality and peripherals such as GPIO, Timers, ADC,
-DAC, PWM, SPI, I2C, CAN, Bluetooth, and USB.
+### Without PSRAM
 
-Getting started
----------------
+```bash
+./build.sh
+```
 
-See the [online documentation](https://docs.micropython.org/) for the API
-reference and information about using MicroPython and information about how
-it is implemented.
+Builds into `ports/rp2/build-C64_RP2350B/firmware.uf2`.
 
-We use [GitHub Discussions](https://github.com/micropython/micropython/discussions)
-as our forum, and [Discord](https://discord.gg/RB8HZSAExQ) for chat. These
-are great places to ask questions and advice from the community or to discuss your
-MicroPython-based projects.
+### With PSRAM
 
-For bugs and feature requests, please [raise an issue](https://github.com/micropython/micropython/issues/new/choose)
-and follow the templates there.
+```bash
+./build_psram.sh
+```
 
-For information about the [MicroPython pyboard](https://store.micropython.org/pyb-features),
-the officially supported board from the
-[original Kickstarter campaign](https://www.kickstarter.com/projects/214379695/micro-python-python-for-microcontrollers),
-see the [schematics and pinouts](http://github.com/micropython/pyboard) and
-[documentation](https://docs.micropython.org/en/latest/pyboard/quickref.html).
+Builds into `ports/rp2/build-C64_RP2350B-PSRAM/firmware.uf2`.
 
-MicroPython design values
--------------------------
+Both scripts wrap the equivalent manual `cmake`/`make` invocation with
+`-DMICROPY_HW_ENABLE_PSRAM=1` or `=0`; flash the resulting `firmware.uf2` to
+the board in BOOTSEL mode.
 
-"Perfection is achieved, not when there is nothing more to add, but when there
-is nothing left to take away." ―- Antoine de Saint-Exupéry.
-
-For its design and implementation, MicroPython aims to follow a set of values.
-Although not a strict set of rules, these values and principles serve as a
-useful guide for new and seasoned contributors, as well as maintainers.
-
-MicroPython is at heart a combination of "Micro" and "Python": it's about
-resource constrained systems running the Python programming language.  Both of
-these concepts balance off against each other in all parts of MicroPython's
-design and implementation.
-
-The key concepts that focus the development of MicroPython are:
-- Minimalism: do lots with little.
-- Efficiency: engineering, build, execution, storage, power consumption.
-- Consistency: the whole system feels like it was designed at once.
-
-When using MicroPython, the Python language is used as the human interface to a
-system, giving fine control over the entities attached to that system.
-In a hardware setting, MicroPython aims to give the user a bare-metal feeling:
-one should feel like they have complete control over the system, with very
-little between the programmer and the physical world.
-
-MicroPython recognises that systems can be very complex.  The existing Python
-libraries in combination with the MicroPython-specific libraries provide a
-user-friendly way to harness the complexity of a system.
-
-Python language compatibility is very important to MicroPython, and at first
-glance MicroPython should look just like regular Python.  In the first instance,
-most Python scripts should run unchanged on MicroPython, even on devices with very
-tight resources.  Beyond that, there are ways to extend MicroPython if needed to
-better match Python.  The provided built-in modules are an efficient subset of
-the corresponding Python ones, without duplication of functionality, and allow
-extension in Python if needed.
-
-Contributing
-------------
-
-MicroPython is an open-source project and welcomes contributions. To be
-productive, please be sure to follow the
-[Contributors' Guidelines](https://github.com/micropython/micropython/wiki/ContributorGuidelines)
-and the [Code Conventions](https://github.com/micropython/micropython/blob/master/CODECONVENTIONS.md).
-Note that MicroPython is licenced under the MIT license, and all contributions
-should follow this license.
 
 About this repository
 ---------------------
