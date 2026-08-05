@@ -448,12 +448,14 @@ static int pyexec_friendly_repl_process_char(int c) {
         } else if (ret == CHAR_CTRL_B) {
             // reset friendly REPL
             mp_hal_stdout_tx_str("\r\n");
-            mp_hal_stdout_tx_str(MICROPY_BANNER_NAME_AND_VERSION);
-            mp_hal_stdout_tx_str("; " MICROPY_BANNER_MACHINE);
-            mp_hal_stdout_tx_str("\r\n");
-            #if MICROPY_PY_BUILTINS_HELP
-            mp_hal_stdout_tx_str("Type \"help()\" for more information.\r\n");
-            #endif
+            if (!MICROPY_BOARD_FRIENDLY_REPL_BANNER()) {
+                mp_hal_stdout_tx_str(MICROPY_BANNER_NAME_AND_VERSION);
+                mp_hal_stdout_tx_str("; " MICROPY_BANNER_MACHINE);
+                mp_hal_stdout_tx_str("\r\n");
+                #if MICROPY_PY_BUILTINS_HELP
+                mp_hal_stdout_tx_str("Type \"help()\" for more information.\r\n");
+                #endif
+            }
             goto input_restart;
         } else if (ret == CHAR_CTRL_C) {
             // break
@@ -621,12 +623,14 @@ int pyexec_friendly_repl(void) {
     mp_hal_stdio_mode_raw();
 
 friendly_repl_reset:
-    mp_hal_stdout_tx_str(MICROPY_BANNER_NAME_AND_VERSION);
-    mp_hal_stdout_tx_str("; " MICROPY_BANNER_MACHINE);
-    mp_hal_stdout_tx_str("\r\n");
-    #if MICROPY_PY_BUILTINS_HELP
-    mp_hal_stdout_tx_str("Type \"help()\" for more information.\r\n");
-    #endif
+    if (!MICROPY_BOARD_FRIENDLY_REPL_BANNER()) {
+        mp_hal_stdout_tx_str(MICROPY_BANNER_NAME_AND_VERSION);
+        mp_hal_stdout_tx_str("; " MICROPY_BANNER_MACHINE);
+        mp_hal_stdout_tx_str("\r\n");
+        #if MICROPY_PY_BUILTINS_HELP
+        mp_hal_stdout_tx_str("Type \"help()\" for more information.\r\n");
+        #endif
+    }
 
     // to test ctrl-C
     /*

@@ -75,6 +75,9 @@
 #endif
 #endif
 
+#include "hardware/clocks.h"
+#include "hardware/vreg.h"
+
 extern uint8_t __StackTop, __StackBottom;
 extern uint8_t __GcHeapStart, __GcHeapEnd;
 #if MICROPY_HW_ENABLE_PSRAM
@@ -101,8 +104,13 @@ int main(int argc, char **argv) {
     pendsv_init();
     soft_timer_init();
 
+    vreg_set_voltage(VREG_VOLTAGE_1_30);
+    sleep_ms(150);  
+    set_sys_clock_khz(300000, true);
+    sleep_ms(50);  
+
     // Set the MCU frequency and as a side effect the peripheral clock to 48 MHz.
-    set_sys_clock_khz(SYS_CLK_KHZ, false);
+    // set_sys_clock_khz(SYS_CLK_KHZ, false);
 
     // Hook for setting up anything that needs to be super early in the boot-up process.
     MICROPY_BOARD_STARTUP();
@@ -125,6 +133,7 @@ int main(int argc, char **argv) {
     mp_uart_init();
     #else
     #ifndef NDEBUG
+
     stdio_init_all();
     #endif
     #endif

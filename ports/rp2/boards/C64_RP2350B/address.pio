@@ -1,0 +1,40 @@
+;
+; Copyright (c) 2020 Raspberry Pi (Trading) Ltd.
+;
+; SPDX-License-Identifier: BSD-3-Clause
+;
+
+.pio_version 1 // only requires PIO version 0
+
+.program c64cartridgeaddress
+.side_set 4 opt
+; rw_card, rw_245, OEAD, OEDA
+
+start:
+.wrap_target
+    ; OSR command, shifted left by OUT instructions:
+    ; [31:16] address (already bit-reversed for GP1=A15 ... GP16=A0)
+    ; [15]    R/W (1 = read), [14:7] data (bit-reversed for GP21=D7 ... GP28=D0)
+    pull block      side 0b1111; all bus drivers disabled while loading a command
+    wait 1 gpio 30              ; wait for BA line go high
+    wait 1 gpio 29
+    wait 0 gpio 29              ; wait for the PHI2 falling to low
+    out pins,16     side 0b1111; put address on the disabled address buffers
+    out y,1         side 0b0001; enable address/data buffers for a read (C64 -> Pico)
+    jmp !y, do_write
+do_read:
+    nop             side 0b0001; read: R/W=1, 245 B->A, both output enables asserted
+    nop
+    nop
+    nop
+    in pins,8                   ; low 8 bit becomes the data
+    push block                  ; return the sampled data through this state machine's RX FIFO
+    wait 1 gpio 29  side 0b0001; keep the bus driven until the PHI2 rising edge
+    jmp finish
+do_write:
+    out pins,8      side 0b0010; write: R/W=0, 245 A->B, both output enables asserted
+    wait 1 gpio 29  side 0b0010; waitstate + finish with wait the end of phi2 cycle
+finish:
+    nop             side 0b1111; release address and data buses
+.wrap
+

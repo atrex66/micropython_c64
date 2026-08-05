@@ -57,10 +57,19 @@
 #define RP2_RESET_PWRON (1)
 #define RP2_RESET_WDT (3)
 
+#if MICROPY_PY_MACHINE_C64BUS
+extern const mp_obj_type_t c64_bus_type;
+#define MICROPY_PY_MACHINE_EXTRA_GLOBALS_C64BUS \
+    { MP_ROM_QSTR(MP_QSTR_C64Bus),               MP_ROM_PTR(&c64_bus_type) },
+#else
+#define MICROPY_PY_MACHINE_EXTRA_GLOBALS_C64BUS
+#endif
+
 #define MICROPY_PY_MACHINE_EXTRA_GLOBALS \
     { MP_ROM_QSTR(MP_QSTR_Pin),                 MP_ROM_PTR(&machine_pin_type) }, \
     { MP_ROM_QSTR(MP_QSTR_RTC),                 MP_ROM_PTR(&machine_rtc_type) }, \
     { MP_ROM_QSTR(MP_QSTR_Timer),               MP_ROM_PTR(&machine_timer_type) }, \
+    MICROPY_PY_MACHINE_EXTRA_GLOBALS_C64BUS \
     \
     { MP_ROM_QSTR(MP_QSTR_PWRON_RESET),         MP_ROM_INT(RP2_RESET_PWRON) }, \
     { MP_ROM_QSTR(MP_QSTR_WDT_RESET),           MP_ROM_INT(RP2_RESET_WDT) }, \

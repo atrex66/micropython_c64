@@ -2295,6 +2295,14 @@ typedef time_t mp_timestamp_t;
 #endif
 #endif
 
+// Optional hook allowing a board to print a fully custom REPL startup banner
+// instead of the default MICROPY_BANNER_NAME_AND_VERSION/MICROPY_BANNER_MACHINE
+// lines. Must expand to an expression; return nonzero to skip the default
+// banner, or 0 to fall back to printing it as normal.
+#ifndef MICROPY_BOARD_FRIENDLY_REPL_BANNER
+#define MICROPY_BOARD_FRIENDLY_REPL_BANNER() (0)
+#endif
+
 // Number of bytes in an object word: mp_obj_t, mp_uint_t, mp_uint_t
 #ifndef MP_BYTES_PER_OBJ_WORD
 #define MP_BYTES_PER_OBJ_WORD (sizeof(mp_uint_t))

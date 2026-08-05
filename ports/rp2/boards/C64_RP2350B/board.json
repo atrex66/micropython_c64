@@ -1,0 +1,18 @@
+{
+    "deploy": [
+        "../deploy.md"
+    ],
+    "docs": "",
+    "features": [
+        "Dual-core",
+        "2MiB Flash",
+        "8MiB QSPI PSRAM (GPIO0 CS1)",
+        "USB CDC",
+        "USB Mass Storage",
+        "C64 Cartridge"
+    ],
+    "mcu": "rp2350",
+    "product": "C64 MicroPython Cartridge (RP2354B0A4)",
+    "thumbnail": "",
+    "vendor": "Custom"
+}

@@ -85,6 +85,11 @@
 #define MICROPY_HW_ENABLE_PSRAM (0)
 #endif
 
+// Board-specific machine.C64Bus class (C64 cartridge PIO bus driver).
+#ifndef MICROPY_PY_MACHINE_C64BUS
+#define MICROPY_PY_MACHINE_C64BUS (0)
+#endif
+
 // Memory allocation policies
 #if MICROPY_HW_ENABLE_PSRAM
 #ifdef MICROPY_GC_STACK_ENTRY_TYPE

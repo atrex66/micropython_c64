@@ -39,6 +39,13 @@
 #include <math.h>
 #endif
 
+// Optional port/board hook: a header (e.g. declaring extra MICROPY_PORT_BUILTINS
+// function objects) that must be included after py/obj.h's types/macros are
+// available, but before mp_module_builtins_globals_table below is expanded.
+#ifdef MICROPY_BOARD_BUILTINS_HEADER
+#include MICROPY_BOARD_BUILTINS_HEADER
+#endif
+
 #if MICROPY_PY_IO
 extern struct _mp_dummy_t mp_sys_stdout_obj; // type is irrelevant, just need pointer
 #endif

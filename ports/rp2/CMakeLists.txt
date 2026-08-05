@@ -109,6 +109,11 @@ include(${MICROPY_DIR}/py/usermod.cmake)
 
 add_executable(${MICROPY_TARGET})
 
+# Generate .pio.h headers for any board-supplied PIO programs.
+if(DEFINED MICROPY_BOARD_PIO_FILES)
+    pico_generate_pio_header(${MICROPY_TARGET} ${MICROPY_BOARD_PIO_FILES})
+endif()
+
 # Provide a C-level definitions of PICO_ARM.
 # (The pico-sdk already defines PICO_RISCV when it's enabled.)
 if(PICO_ARM)
@@ -502,6 +507,17 @@ list(APPEND MICROPY_SOURCE_QSTR
     ${MICROPY_SOURCE_USERMOD}
     ${MICROPY_SOURCE_BOARD}
 )
+
+# pico_generate_pio_header() (called above) only wires generated PIO headers
+# into firmware's normal build-time dependencies; the separate QSTR
+# extraction pass below preprocesses board sources independently and needs
+# the same headers to already exist, so add them as QSTR dependencies too.
+if(DEFINED MICROPY_BOARD_PIO_FILES)
+    foreach(MICROPY_BOARD_PIO_FILE ${MICROPY_BOARD_PIO_FILES})
+        get_filename_component(MICROPY_BOARD_PIO_FILE_NAME ${MICROPY_BOARD_PIO_FILE} NAME)
+        list(APPEND MICROPY_SOURCE_QSTR ${CMAKE_BINARY_DIR}/${MICROPY_BOARD_PIO_FILE_NAME}.h)
+    endforeach()
+endif()
 
 # Define mpy-cross flags
 if (${PICO_PLATFORM} STREQUAL "rp2040")
