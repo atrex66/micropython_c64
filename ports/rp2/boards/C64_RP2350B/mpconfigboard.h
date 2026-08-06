@@ -27,9 +27,17 @@
 // bus hardware on first use. The declarations live in c64_bus.h, pulled in
 // by py/modbuiltins.c via MICROPY_BOARD_BUILTINS_HEADER (see there for why).
 #define MICROPY_BOARD_BUILTINS_HEADER "c64_bus.h"
+//
+// `run(filename)` is a C64 BASIC "RUN"-flavoured alias for the standard
+// `execfile(filename)` builtin (py/builtinevex.c, MICROPY_PY_BUILTINS_EXECFILE
+// -- already enabled here via the rp2 port's EXTRA_FEATURES ROM level), which
+// parses and executes the given file in the current globals/locals. That's
+// the same net effect as `exec(open(filename).read())`, just without reading
+// the whole file into a string first.
 #define MICROPY_PORT_BUILTINS \
     { MP_ROM_QSTR(MP_QSTR_peek), MP_ROM_PTR(&mp_c64_peek_obj) }, \
-    { MP_ROM_QSTR(MP_QSTR_poke), MP_ROM_PTR(&mp_c64_poke_obj) },
+    { MP_ROM_QSTR(MP_QSTR_poke), MP_ROM_PTR(&mp_c64_poke_obj) }, \
+    { MP_ROM_QSTR(MP_QSTR_run), MP_ROM_PTR(&mp_builtin_execfile_obj) },
 
 // Classic Commodore 64 BASIC-style REPL banner (see repl_banner.c), showing
 // free RAM/flash instead of the default MicroPython version/board banner.

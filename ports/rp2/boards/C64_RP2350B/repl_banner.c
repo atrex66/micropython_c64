@@ -32,7 +32,8 @@ static bool c64_flash_bytes_free(size_t *out_bytes) {
 }
 
 int c64_friendly_repl_banner(void) {
-    mp_hal_stdout_tx_str("**** C64 MICROPYTHON V0.1 ****\r\n");
+    mp_hal_stdout_tx_str("\033[2J\033[H"); // clear screen and home cursor
+    mp_hal_stdout_tx_str("    **** C64 MICROPYTHON V0.1 ****\r\n");
 
     // Collect garbage first: by this point _boot.py/boot.py/main.py have
     // already run (vfs mount, module imports, etc.), leaving unreferenced
@@ -42,12 +43,12 @@ int c64_friendly_repl_banner(void) {
 
     gc_info_t gc_info_obj;
     gc_info(&gc_info_obj);
-    mp_printf(&mp_plat_print, "520KB RAM SYSTEM %u BYTES FREE\r\n", (unsigned int)gc_info_obj.free);
-    mp_printf(&mp_plat_print, "C64 RAM SYSTEM 65535 BYTES FREE\r\n");
+    mp_printf(&mp_plat_print, "  520KB RAM SYSTEM %u BYTES FREE\r\n", (unsigned int)gc_info_obj.free);
+    mp_printf(&mp_plat_print, "   C64 RAM SYSTEM 65535 BYTES FREE\r\n");
 
     size_t flash_free;
     if (c64_flash_bytes_free(&flash_free)) {
-        mp_printf(&mp_plat_print, "1024KB FLASH SYSTEM %u KB FREE\r\n", (unsigned int)flash_free / 1024);
+        mp_printf(&mp_plat_print, "   1024KB FLASH SYSTEM %u KB FREE\r\n", (unsigned int)flash_free / 1024);
     }
 
     mp_hal_stdout_tx_str("READY.\r\n");
